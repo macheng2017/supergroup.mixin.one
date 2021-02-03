@@ -14,9 +14,9 @@ services:
       - /var/lib/postgresql/data
     #      - ./postgres/data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: macheng
-      POSTGRES_PASSWORD: macheng
-      POSTGRES_DB: macheng
+      - POSTGRES_USER=macheng
+      - POSTGRES_PASSWORD=macheng
+      - POSTGRES_DB=macheng
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
 #  adminer:
 #    image: adminer
