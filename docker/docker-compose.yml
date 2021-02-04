@@ -1,0 +1,73 @@
+# Use postgres/example user/password credentials
+version: '3.8'
+networks:
+  supergroup_net:
+    driver: bridge
+services:
+  web:
+    image: nginx
+    container_name: nginx
+    networks:
+      - supergroup_net
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./web:/var/www/spzwl/dist
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+
+  supergroup_message:
+    build:
+      context: .
+      target: supergroup_message
+
+    image: supergroup_message
+    networks:
+      - supergroup_net
+    restart: always
+    container_name: sup_msg
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  supergroup_api:
+    build:
+      context: .
+      target: supergroup_api
+    image: supergroup_api
+    networks:
+      - supergroup_net
+    restart: always
+    container_name: sup_api
+    ports:
+      - 7001:7001
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:10.15
+    container_name: pg
+    networks:
+      - supergroup_net
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres/postgres.conf:/etc/postgresql/postgresql.conf
+      - ./postgres/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./postgres/data:/var/lib/postgresql/data
+#      - /var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=test
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    healthcheck:
+      test: "exit 0"
+#  adminer:
+#    image: adminer
+#    restart: always
+#    ports:
+#      - 8080:8080
