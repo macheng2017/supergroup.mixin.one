@@ -27,11 +27,11 @@ FROM supergroup_base AS supergroup_message
 EXPOSE 80
 EXPOSE 443
 WORKDIR /go/app
-CMD ["./main","-config","/go/app/config.yaml","service message"]
+CMD ["./main","-config","/go/app/config.yaml","-service","message"]
 
 FROM supergroup_base AS supergroup_api
 WORKDIR /go/app
-CMD ["./main","-config","/go/app/config.yaml","service http"]
+CMD ["./main","-config","/go/app/config.yaml","-service","http"]
 #
 #FROM mysql:5.7 AS mysql_base
 #ADD ./doc/init.sql /docker-entrypoint-initdb.d
